@@ -1,39 +1,43 @@
 #include<iostream>
 #include<string.h>
+
 using namespace std;
 
-int dp[100][200];
+int dp[40][40];
 
-
-int lcs(string x, int m, string y, int n)
+int lcSubstring(string x, int xIndex, string y, int yIndex, int &maxLength)
 {
-	if(m==0 || n==0)
-		return 0;
-	
-	if(dp[m][n]!=-1)
-		return dp[m][n];
-	
-	if(x[m-1]==y[n-1])
-	{
-		return dp[m][n]=1+lcs(x,m-1, y, n-1);
-	}
-	else{
-		dp[m][n]=0;
-		return dp[m][n]=max(lcs(x,m-1,y,n),lcs(x,m,y, n-1));
-	}
-}
+    if(xIndex < 0 || yIndex < 0)
+        return 0;
 
+    if(dp[xIndex][yIndex] != -1)
+        return dp[xIndex][yIndex];
+    
+    if(x[xIndex] == y[yIndex])
+    {
+        dp[xIndex][yIndex] = 1 + lcSubstring(x, xIndex-1, y, yIndex-1, maxLength);
+        maxLength = max(maxLength, dp[xIndex][yIndex]);
+        return dp[xIndex][yIndex];
+    }
+    
+    return dp[xIndex][yIndex] = 0;
+}
 
 int main()
 {
-	memset(dp, -1, sizeof(dp));
-	string x, y;
-	cout<<"Enter the strings: \n";
-	cin>>x>>y;
-	int m,n;
-	m=x.length();
-	n=y.length();
-	
-	cout<<lcs(x,m,y,n);
-	
+    string x = "abcdgh";
+    string y = "abedohr";
+    memset(dp, -1, sizeof(dp));
+    int maxLength = 0;
+
+    for(int i = 0; i < x.size(); i++)
+    {
+        for(int j = 0; j < y.size(); j++)
+        {
+            lcSubstring(x, i, y, j, maxLength);
+        }
+    }
+    
+    cout << "Length of Longest Common Substring: " << maxLength << endl;
+    return 0;
 }
